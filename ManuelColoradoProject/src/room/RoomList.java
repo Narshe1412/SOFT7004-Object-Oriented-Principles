@@ -35,17 +35,17 @@ public class RoomList implements Serializable {
 		for (Room room : rooms) {
 			switch (roomType) {
 			case "suite":
-				if (room instanceof Suite && room.isOccupied()) {
+				if (room instanceof Suite && !room.isOccupied()) {
 					freeRooms++;
 				}
 				break;
 			case "double":
-				if (room instanceof Double && room.isOccupied()) {
+				if (room instanceof Double && !room.isOccupied()) {
 					freeRooms++;
 				}
 				break;
 			case "single":
-				if (room instanceof Single && room.isOccupied()) {
+				if (room instanceof Single && !room.isOccupied()) {
 					freeRooms++;
 				}
 				break;
@@ -60,17 +60,17 @@ public class RoomList implements Serializable {
 		for (Room room : rooms) {
 			switch (roomType) {
 			case "suite":
-				if (room instanceof Suite && !room.isOccupied()) {
+				if (room instanceof Suite && !room.isReserved()) {
 					id = room.getNumber();
 				}
 				break;
 			case "double":
-				if (room instanceof Double && !room.isOccupied()) {
+				if (room instanceof Double && !room.isReserved()) {
 					id = room.getNumber();
 				}
 				break;
 			case "single":
-				if (room instanceof Single && !room.isOccupied()) {
+				if (room instanceof Single && !room.isReserved()) {
 					id = room.getNumber();
 				}
 				break;
@@ -83,7 +83,7 @@ public class RoomList implements Serializable {
 		String guestList = "";
 
 		for (Room room : rooms) {
-			if (!(room.getGuests() == null)) {
+			if (room.getGuests() != null) {
 				for (Guest guest : room.getGuests()) {
 					switch (guestType) {
 					case "lecturer":
@@ -105,6 +105,20 @@ public class RoomList implements Serializable {
 		return guestList;
 	}
 
+	public String getReservationList() {
+		String guestList = "";
+
+		for (Room room : rooms) {
+			if (room.isReserved()) {
+				guestList += "Room #" + room.getNumber() + " reserved to " + room.getReservation() + "\n";
+			}
+		}
+		if (guestList.equals("")) {
+			guestList = "No reservations in the system.";
+		}
+		return guestList;
+	}
+
 	public Room getRoomByID(int roomNo) {
 		for (Room room : rooms) {
 			if (room.getNumber() == roomNo) {
@@ -115,7 +129,11 @@ public class RoomList implements Serializable {
 	}
 
 	public double getPayment(int roomNo) {
-		return getRoomByID(roomNo).calculatePrice();
+		Room room = getRoomByID(roomNo);
+		if (room.isReserved() && !room.isOccupied()) {
+			System.out.println("This room is reserved but no guests have checked in.");
+		}
+		return room.calculatePrice();
 	}
 
 	public String getCustomer(int roomNo) {

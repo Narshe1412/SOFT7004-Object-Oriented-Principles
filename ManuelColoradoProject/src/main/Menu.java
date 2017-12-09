@@ -11,12 +11,12 @@ public class Menu {
 
 	public void start() {
 		Scanner keyboard = new Scanner(System.in);
-		String option = "";
+		String menuOption = "";
 
-		while (!option.equals("5")) {
+		while (!menuOption.equals("5")) {
 			printMenu();
-			option = keyboard.nextLine();
-			switch (option) {
+			menuOption = keyboard.nextLine();
+			switch (menuOption) {
 			case "1":
 				app.displayAvailableRooms();
 				break;
@@ -34,17 +34,18 @@ public class Menu {
 				break;
 			default:
 				System.out.println("Wrong option selected.");
+				menuOption = "";
 			}
 		}
-		
+
 	}
 
 	private void menuReservation() {
 		String option = "";
 		Scanner keyboard = new Scanner(System.in);
 
-		while (!option.equals("5")) {
-			printMenu();
+		while (!option.equals("6")) {
+			printMenuReservations();
 			option = keyboard.nextLine();
 			switch (option) {
 			case "1":
@@ -57,21 +58,28 @@ public class Menu {
 				app.cancelReservation();
 				break;
 			case "4":
-				app.exit();
+				app.displayReservations();
+				break;
+			case "5":
+				app.processReservation();
+				break;
+			case "6":
+				// return
 				break;
 			default:
 				System.out.println("Wrong option selected.");
+				option = "";
 			}
 		}
-		
+
 	}
 
 	public void printMenu() {
 		System.out.println("Welcome to CIT Hotel Management System");
 		System.out.println("**************************************");
-		System.out.println("1)  Display Available Rooms");
-		System.out.println("2)  Display Guests");
-		System.out.println("3)  Process Reservation");
+		System.out.println("1)  Display Empty Rooms");
+		System.out.println("2)  Display Checked-in Guests");
+		System.out.println("3)  Reservations");
 		System.out.println("4)  Process Payment");
 		System.out.println("5)  Exit");
 	}
@@ -82,6 +90,8 @@ public class Menu {
 		System.out.println("1)  New Reservation");
 		System.out.println("2)  View Reservation");
 		System.out.println("3)  Cancel Reservation");
-		System.out.println("4)  Return");
+		System.out.println("4)  List Reservations");
+		System.out.println("5)  Check in Guests");
+		System.out.println("6)  Return");
 	}
 }

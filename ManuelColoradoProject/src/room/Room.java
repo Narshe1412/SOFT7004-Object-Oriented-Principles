@@ -1,12 +1,14 @@
 package room;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Scanner;
 
 import exception.TestException;
 import guest.Guest;
 
-public class Room {
+@SuppressWarnings("serial")
+public class Room implements Serializable{
 	private static int ROOM_NUM = 1;
 	private int roomNumber;
 	private int maxGuests;
@@ -17,8 +19,10 @@ public class Room {
 	public Room(double price, int maxGuests) {
 		roomNumber = ROOM_NUM;
 		ROOM_NUM++;
-		guests = null;
-		reservedBy = null;
+		this.price = price;
+		this.maxGuests = maxGuests;
+		this.guests = null;
+		this.reservedBy = null;
 	}
 
 	public ArrayList<Guest> getGuests() {
@@ -26,6 +30,9 @@ public class Room {
 	}
 
 	public void addGuest(Guest guest) throws TestException {
+		if (guests == null) {
+			this.guests = new ArrayList<Guest>();
+		}
 		if (!isFull()) {
 			guests.add(guest);
 		} else {
@@ -77,10 +84,11 @@ public class Room {
 	}
 
 	public boolean isOccupied() {
-		return (guests == null);
+		return (guests != null);
 	}
 
 	public boolean isFull() {
+		if (guests == null) return false;
 		return (guests.size() >= maxGuests);
 	}
 
@@ -90,6 +98,10 @@ public class Room {
 	
 	public String getReservation() {
 		return this.reservedBy.getName();
+	}
+	
+	public boolean isReserved() {
+		return (this.reservedBy != null);
 	}
 
 	public String toString() {
@@ -118,8 +130,7 @@ public class Room {
 				option = "";
 				break;
 			}
-		}
-		
+		}		
 		return choice;
 	}
 }

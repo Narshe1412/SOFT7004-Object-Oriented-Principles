@@ -24,7 +24,7 @@ public class Controller {
 
 	public void displayAvailableRooms() {
 		String choice = Room.getTypeOfRoom();
-		System.out.println("The amount of free " + choice + " is " + hotel.getFreeRooms(choice));
+		System.out.println("The amount of free " + choice + "s is " + hotel.getFreeRooms(choice));
 	}
 
 	public void displayGuests() {
@@ -35,9 +35,7 @@ public class Controller {
 
 	public void processReservation() {
 		int roomNo = viewReservation();
-		if (roomNo < 0) {
-			System.out.println("Room does not exists.");
-		} else {
+		if (roomNo >= 0) {
 			try {
 				Room currentRoom = hotel.getRoomByID(roomNo);
 				while (!currentRoom.isFull()) {
@@ -72,9 +70,11 @@ public class Controller {
 			switch (guestType) {
 			case "lecturer":
 				hotel.addReservation(roomNo, new Lecturer(guestName));
+				System.out.println("Room #" + roomNo + " reserved to " + guestName);
 				break;
 			case "student":
 				hotel.addReservation(roomNo, new Student(guestName));
+				System.out.println("Room #" + roomNo + " reserved to " + guestName);
 				break;
 			default:
 				System.out.println("Wrong type of guest chosen.");
@@ -87,37 +87,43 @@ public class Controller {
 		System.out.println("Please enter room number:");
 		String option = "";
 		option = keyboard.nextLine();
-		int roomNo = -1;
+		int roomNo;
 		try {
 			roomNo = Integer.parseInt(option);
 			System.out.println("Room #" + option + " is reserved to " + hotel.getCustomer(roomNo));
 		} catch (Exception e) {
-			System.out.println("Room number does not exists.");
+			roomNo = -1;
+			System.out.println("Room #" + option + " is not reserved.");
 		}
-		
 		return roomNo;
+	}
+
+	public void displayReservations() {
+		System.out.println(hotel.getReservationList());
 	}
 
 	public void cancelReservation() {
 		Scanner keyboard = new Scanner(System.in);
 		int option = viewReservation();
-		System.out.println("Please enter room number again to confirm cancellation. Type (C) to Cancel.");
-		String confirm = "";
-		confirm = keyboard.nextLine();
-		if (!confirm.toUpperCase().equals("C")) {
-			try {
-				if (option == Integer.parseInt(confirm)) {
-					hotel.getRoomByID(option).emptyRoom();
-				} else {
+		if (option >= 0) {
+			System.out.println("Please enter room number again to confirm cancellation. Type (C) to Cancel.");
+			String confirm = "";
+			confirm = keyboard.nextLine();
+			if (!confirm.toUpperCase().equals("C")) {
+				try {
+					if (option == Integer.parseInt(confirm)) {
+						hotel.getRoomByID(option).emptyRoom();
+						System.out.println("Reservation for Room #" + option + " has been cancelled.");
+					} else {
+						System.out.println("Room and confirmation values don't match. Please try again.");
+					}
+				} catch (Exception e) {
 					System.out.println("Room and confirmation values don't match. Please try again.");
 				}
-			} catch (Exception e) {
-				System.out.println("Room and confirmation values don't match. Please try again.");
+			} else {
+				System.out.println("Operation cancelled.");
 			}
-		} else {
-			System.out.println("Operation cancelled.");
 		}
-		
 	}
 
 	public void processPayment() {
@@ -134,13 +140,14 @@ public class Controller {
 			option = keyboard.nextLine();
 			if (option.equalsIgnoreCase("y")) {
 				hotel.emptyRoom(roomNo);
+				System.out.println("Payment processed.");
+				System.out.println("Guests for Room #" + roomNo + " checked out.");
 			} else {
 				System.out.println("Option cancelled.");
 			}
 		} catch (Exception e) {
 			System.out.println("Room does not exist.");
 		}
-		
 	}
 
 	public void exit() {
@@ -166,6 +173,5 @@ public class Controller {
 				option = "";
 			}
 		}
-		
 	}
 }
